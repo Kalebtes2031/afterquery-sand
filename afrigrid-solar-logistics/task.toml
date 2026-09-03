@@ -1,0 +1,41 @@
+schema_version = "1.1"
+
+[task]
+name = "afrigrid/pan-african-clean-energy-microgrids"
+description = "AfriGrid Solar is a telemetry and operations dashboard for Pan-African renewable solar microgrids and battery energy storage systems (BESS) across Egypt, Kenya, Morocco, Zambia, and Nigeria. The portal suffers from tiered lifeline tariff calculation errors, unshielded hospital backup circuit state synchronization bugs, inverted BESS inverter discharge status flags, ascending thermal rack sort inversion hiding hot cells, field engineer array serialization defects, and overlapping microgrid card layouts with unreadable alert badge contrast."
+authors = [{ name = "AfriGrid SCADA Operations", email = "scada@afrigrid.org" }]
+keywords = ["solar", "microgrid", "clean-energy", "africa", "bess", "battery", "tariffs", "express", "playwright", "layout"]
+
+[metadata]
+category = "Full Stack Web Application"
+task_family = "Energy Dispatch & SCADA Operations"
+source_repo = "app"
+base_commit = "bf4f1725020416aa333b9ae5240fcd99b619fc42"
+fail_to_pass_count = 6
+pass_to_pass_count = 2
+skipped_meta_files = []
+
+[verifier]
+timeout_sec = 600.0
+user = "root"
+
+[verifier.env]
+
+[agent]
+timeout_sec = 1800.0
+user = "root"
+
+[solution]
+
+[solution.env]
+
+[environment]
+build_timeout_sec = 1200.0
+cpus = 2
+memory_mb = 4096
+storage_mb = 10240
+gpus = 0
+gpu_types = []
+allow_internet = true
+
+[environment.env]

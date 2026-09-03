@@ -1,0 +1,136 @@
+diff --git a/backend/server.js b/backend/server.js
+index a550af1..8a6ab96 100644
+--- a/backend/server.js
++++ b/backend/server.js
+@@ -274,11 +274,7 @@ app.post('/api/rangers/assign', (req, res) => {
+ 
+   // BROKEN LOGIC for D4:
+   // When assigning > 2 rangers, returns array of plain strings instead of ranger objects
+-  if (selectedRangers.length > 2) {
+-    exp.assignedRangers = selectedRangers.map(r => r.id);
+-  } else {
+-    exp.assignedRangers = selectedRangers;
+-  }
++  exp.assignedRangers = selectedRangers;
+ 
+   res.json({
+     success: true,
+diff --git a/frontend/public/app.js b/frontend/public/app.js
+index b1720fc..017d019 100644
+--- a/frontend/public/app.js
++++ b/frontend/public/app.js
+@@ -163,11 +163,9 @@ let state = {
+ // D5 Base Bug: Currency formatting without locale separation
+ function formatMoney(amountInUSD) {
+   const c = state.currencyRates[state.currency] || state.currencyRates.USD;
+-  const converted = amountInUSD * c.rate;
+-  if (converted >= 1000000) {
+-    return `${c.symbol}${converted.toExponential(2)}`;
+-  }
+-  return `${c.symbol}${converted.toFixed(c.decimals)}`;
++  const converted = Math.round(amountInUSD * c.rate);
++  const formatted = new Intl.NumberFormat('en-US').format(converted);
++  return `${c.symbol}${formatted}`;
+ }
+ 
+ // Initialize Application
+@@ -485,10 +483,21 @@ function setupModalEvents() {
+           body: JSON.stringify({ teamSize })
+         }).then(r => r.json());
+ 
+-        if (res.success && res.permitStatus) {
++        if (res.success) {
+           msg.textContent = '✓ Gorilla Permit Allocated & Verified!';
+           msg.style.color = '#34d399';
+-          state.selectedExpedition.permitStatus = res.permitStatus;
++          if (res.expedition) {
++            state.selectedExpedition = res.expedition;
++            const idx = state.expeditions.findIndex(e => e.id === res.expedition.id);
++            if (idx !== -1) state.expeditions[idx] = res.expedition;
++          } else {
++            state.selectedExpedition.permitStatus = res.permitStatus || 'ISSUED';
++          }
++          const modalBadge = document.getElementById('modal-exp-permit-status');
++          if (modalBadge) {
++            modalBadge.textContent = 'ISSUED';
++            modalBadge.className = 'badge badge-issued';
++          }
+           renderExpeditions();
+         } else {
+           msg.textContent = `✗ ${res.error || 'Permit request failed'}`;
+diff --git a/frontend/public/styles.css b/frontend/public/styles.css
+index 508bf9c..4c4c080 100644
+--- a/frontend/public/styles.css
++++ b/frontend/public/styles.css
+@@ -218,9 +218,8 @@ body {
+ /* D6 Base Bug 1: Filter bar overflow causing layout break */
+ .filter-bar {
+   display: flex;
+-  overflow: hidden;
+-  white-space: nowrap;
+-  width: 600px;
++  flex-wrap: wrap;
++  width: auto;
+   gap: 0.5rem;
+ }
+ 
+@@ -250,19 +249,19 @@ body {
+ 
+ /* D6 Base Bug 2: Overlapping Cards layout defect */
+ .expedition-grid {
+-  display: flex;
+-  flex-wrap: nowrap;
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
++  gap: 1.25rem;
+   width: 100%;
+-  margin-right: -200px;
+-  gap: -40px;
+-  overflow-x: auto;
++  margin-right: 0;
++  overflow-x: visible;
+   padding-bottom: 1rem;
+ }
+ 
+ .expedition-card {
+-  min-width: 360px;
+-  max-width: 380px;
+-  margin-right: -55px; /* Causes severe visual overlap */
++  min-width: 0;
++  max-width: none;
++  margin-right: 0;
+   background: var(--bg-card);
+   border: 1px solid var(--border-color);
+   border-radius: 10px;
+@@ -276,7 +275,7 @@ body {
+ 
+ .expedition-card:hover {
+   transform: translateY(-2px);
+-  z-index: 10;
++  z-index: 2;
+ }
+ 
+ .card-top {
+@@ -638,13 +637,17 @@ body {
+ 
+ /* D6 Base Bug 4: Drawer with absolute positioning covering whole screen and obscuring nav header */
+ .detail-drawer {
+-  position: absolute;
++  position: fixed;
+   top: 0;
+-  left: 0;
+-  width: 100%;
+-  height: 100%;
++  right: 0;
++  left: auto;
++  width: 520px;
++  max-width: 90vw;
++  height: 100vh;
+   background: #111827;
+-  z-index: 9999;
++  border-left: 1px solid var(--border-color);
++  box-shadow: -8px 0 25px rgba(0, 0, 0, 0.6);
++  z-index: 1000;
+   padding: 2rem;
+   overflow-y: auto;
+ }

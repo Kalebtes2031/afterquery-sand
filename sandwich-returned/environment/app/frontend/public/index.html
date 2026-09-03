@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AfriGrid Solar - Pan-African Renewable Microgrid &amp; Storage Operations Hub</title>
+  <meta name="description" content="Operational dispatch and telemetry portal for African solar microgrids, battery energy storage systems (BESS), and rural community lifeline tariff distribution across Egypt, Kenya, Morocco, Zambia, and Nigeria." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app-root">
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="brand-container">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="solar-svg">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">AFRIGRID SOLAR</h1>
+          <span class="brand-subtitle">Pan-African Clean Energy &amp; Storage Hub</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" id="nav-tabs">
+        <button class="tab-btn active" id="tab-microgrids" data-tab="microgrids">Microgrid Network</button>
+        <button class="tab-btn" id="tab-bess" data-tab="bess">BESS &amp; Inverter Dispatch</button>
+        <button class="tab-btn" id="tab-tariffs" data-tab="tariffs">Community Tariff &amp; Subsidies</button>
+      </nav>
+
+      <div class="header-controls">
+        <div class="currency-selector-wrapper">
+          <label for="currency-select" class="currency-label">Billing Currency:</label>
+          <select id="currency-select" class="currency-dropdown">
+            <option value="USD">USD ($)</option>
+            <option value="KES">KES (KSh)</option>
+            <option value="EGP">EGP (E£)</option>
+            <option value="ZAR">ZAR (R)</option>
+            <option value="NGN">NGN (₦)</option>
+          </select>
+        </div>
+        <div class="live-status-pill">
+          <span class="pulse-dot"></span>
+          <span>Nairobi SCADA Live</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Operational KPI Stats Ribbon -->
+    <section class="kpi-ribbon" id="kpi-ribbon">
+      <div class="kpi-card">
+        <div class="kpi-icon">☀️</div>
+        <div class="kpi-content">
+          <span class="kpi-label">Active Microgrids</span>
+          <span class="kpi-value" id="stat-active-grids">5 Hubs</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-content">
+          <span class="kpi-label">Total Generation</span>
+          <span class="kpi-value" id="stat-total-capacity">2,480 MW</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🔋</div>
+        <div class="kpi-content">
+          <span class="kpi-label">Current Grid Load</span>
+          <span class="kpi-value" id="stat-current-load">2,159 MW</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">⚠️</div>
+        <div class="kpi-content">
+          <span class="kpi-label">Brownout Alerts</span>
+          <span class="kpi-value" id="stat-brownout-alerts">1 Active</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="main-content">
+      <!-- SECTION 1: MICROGRID NETWORK -->
+      <section id="section-microgrids" class="tab-section active">
+        <div class="section-header-bar">
+          <div class="filter-bar" id="region-filter-bar">
+            <button class="filter-pill active" data-filter="ALL">All Regions</button>
+            <button class="filter-pill" data-filter="North Africa">North Africa (EG/MA)</button>
+            <button class="filter-pill" data-filter="East Africa">East Africa (KE)</button>
+            <button class="filter-pill" data-filter="Southern Africa">Southern Africa (ZM)</button>
+            <button class="filter-pill" data-filter="West Africa">West Africa (NG)</button>
+          </div>
+          <button class="btn btn-primary" id="btn-new-microgrid">+ Connect Installation</button>
+        </div>
+
+        <!-- Microgrid Cards Container -->
+        <div class="microgrid-grid" id="microgrid-cards-container">
+          <!-- Populated via app.js -->
+        </div>
+      </section>
+
+      <!-- SECTION 2: BESS & INVERTER DISPATCH -->
+      <section id="section-bess" class="tab-section">
+        <div class="dispatch-layout-container">
+          <!-- BESS Battery Banks Panel -->
+          <div class="panel bess-panel">
+            <div class="panel-header">
+              <h2>High-Voltage Battery Storage Banks</h2>
+              <span class="panel-tag">Telemetry Link: Active</span>
+            </div>
+            <div class="bess-list" id="bess-banks-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Thermal Diagnostics & Inverter Dispatch Panel -->
+          <div class="panel thermal-panel">
+            <div class="panel-header">
+              <h2>Thermal Racks &amp; Inverter Telemetry</h2>
+              <span class="panel-tag" id="active-bess-name">Garissa MegaPack Bank A</span>
+            </div>
+            <div class="dispatch-action-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="bess-unit-select">Select BESS Inverter Bank:</label>
+                  <select id="bess-unit-select" class="form-control">
+                    <option value="BESS-01">Garissa MegaPack Inverter Bank A (40 MWh)</option>
+                    <option value="BESS-02">Aswan BESS High-Voltage Core 03 (120 MWh)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="bess-command-select">Dispatch Operating Command:</label>
+                  <select id="bess-command-select" class="form-control">
+                    <option value="DISCHARGE">DISCHARGE (Supply Community Peak Load)</option>
+                    <option value="CHARGE">CHARGE (Absorb Daytime Solar Surplus)</option>
+                    <option value="STANDBY">STANDBY (Frequency Reserve Buffer)</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn-warning" id="btn-dispatch-bess">Execute Dispatch Command</button>
+            </div>
+
+            <div class="thermal-container">
+              <h3 class="thermal-title">Battery Rack Thermal Sensors (Critical Hot First)</h3>
+              <div class="thermal-list" id="thermal-racks-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: COMMUNITY TARIFF & SUBSIDIES CALCULATOR -->
+      <section id="section-tariffs" class="tab-section">
+        <div class="tariff-layout-container">
+          <div class="panel tariff-form-panel">
+            <div class="panel-header">
+              <h2>Rural Power Tariff &amp; Subsidy Calculator</h2>
+              <span class="panel-tag">Sub-Saharan Energy Commission Model</span>
+            </div>
+            <form id="tariff-form" class="calculator-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="calc-installation">Microgrid Solar Node:</label>
+                  <select id="calc-installation" class="form-control">
+                    <option value="0.15" data-subsidy="50" data-feed="0.06">Garissa Solar Station ($0.15/kWh, 50% Lifeline)</option>
+                    <option value="0.12" data-subsidy="40" data-feed="0.08">Benban Solar Complex ($0.12/kWh, 40% Lifeline)</option>
+                    <option value="0.14" data-subsidy="35" data-feed="0.09">Noor Ouarzazate Complex ($0.14/kWh, 35% Lifeline)</option>
+                    <option value="0.10" data-subsidy="45" data-feed="0.05">Kariba Hydro-Solar ($0.10/kWh, 45% Lifeline)</option>
+                    <option value="0.13" data-subsidy="40" data-feed="0.07">Kainji Rural Solar Hub ($0.13/kWh, 40% Lifeline)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="calc-monthly-kwh">Monthly Household Consumption (kWh):</label>
+                  <input type="number" id="calc-monthly-kwh" class="form-control" value="350" min="10" max="5000" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="calc-feed-in-kwh">Rooftop Solar Feed-in to Grid (kWh):</label>
+                  <input type="number" id="calc-feed-in-kwh" class="form-control" value="60" min="0" max="2000" />
+                </div>
+                <div class="form-group">
+                  <label for="calc-access-fee">Rural Grid Access &amp; Metering Fee ($):</label>
+                  <input type="number" id="calc-access-fee" class="form-control" value="4.50" step="0.50" min="0" max="50" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="calc-lifeline-pct">Lifeline Low-Income Subsidy on Tier 1 (%):</label>
+                  <input type="number" id="calc-lifeline-pct" class="form-control" value="50" min="0" max="90" />
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary" id="btn-calculate-bill">Calculate Monthly Energy Bill</button>
+            </form>
+          </div>
+
+          <div class="panel breakdown-panel">
+            <div class="panel-header">
+              <h2>Monthly Electricity Statement Breakdown</h2>
+              <span class="panel-tag badge-live">Verified Tariff Math</span>
+            </div>
+            <div class="breakdown-cards" id="tariff-breakdown-output">
+              <div class="breakdown-item">
+                <span class="breakdown-label">Gross Energy Consumption (350 kWh):</span>
+                <span class="breakdown-value" id="val-gross-charge">$52.50</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="breakdown-label">Lifeline Subsidy Discount (50% on first 50 kWh):</span>
+                <span class="breakdown-value text-green" id="val-subsidy-discount">-$3.75</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="breakdown-label">Solar Feed-In Generation Credit (60 kWh):</span>
+                <span class="breakdown-value text-cyan" id="val-feedin-credit">-$3.60</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="breakdown-label">Rural Grid Infrastructure Access Fee:</span>
+                <span class="breakdown-value" id="val-access-fee">$4.50</span>
+              </div>
+              <div class="breakdown-total-card">
+                <span class="total-label">Total Net Monthly Bill:</span>
+                <span class="total-amount" id="val-net-bill">$49.65</span>
+                <span class="total-currency-note" id="val-billing-currency-note">Billed in USD</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Emergency Load Shedding & Critical Circuit Drawer -->
+    <div class="detail-drawer" id="microgrid-modal" style="display: none;">
+      <div class="drawer-header">
+        <h2 id="modal-grid-title">Emergency Circuit Dispatch &amp; SCADA</h2>
+        <button class="btn-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-info-group">
+          <label>Installation ID:</label>
+          <span id="modal-grid-id">GRID-102</span>
+        </div>
+        <div class="drawer-info-group">
+          <label>Location:</label>
+          <span id="modal-grid-location">Garissa County, Kenya</span>
+        </div>
+        <div class="drawer-info-group">
+          <label>Operating Status:</label>
+          <span id="modal-grid-status" class="badge badge-warning">BROWNOUT_ALERT</span>
+        </div>
+        <div class="drawer-action-block">
+          <h3>Critical Healthcare &amp; Water Backup Circuit</h3>
+          <p class="helper-text">Designate high-priority hospital vaccine cold chain circuits to prevent brownout disconnection.</p>
+          <div class="form-group">
+            <label for="modal-circuit-input">Critical Circuit Name:</label>
+            <input type="text" id="modal-circuit-input" class="form-control" value="Garissa Referral Hospital" />
+          </div>
+          <button class="btn btn-warning" id="btn-engage-override">Engage Critical Clinic Backup Circuit</button>
+          <div id="override-result-message" class="override-message"></div>
+        </div>
+
+        <div class="drawer-action-block">
+          <h3>Dispatch High-Voltage Field Engineers</h3>
+          <p class="helper-text">Deploy certified SCADA and inverter technicians to solar sub-stations.</p>
+          <div class="engineer-checkbox-list" id="engineer-select-list">
+            <!-- Populated via JS -->
+          </div>
+          <button class="btn btn-primary" id="btn-save-engineers">Deploy Selected Field Engineers</button>
+          <div id="engineer-result-message" class="engineer-message"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

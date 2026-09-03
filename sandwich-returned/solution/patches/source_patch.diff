@@ -1,0 +1,208 @@
+diff --git a/backend/server.js b/backend/server.js
+index f7e1cab..66d5aff 100644
+--- a/backend/server.js
++++ b/backend/server.js
+@@ -178,10 +178,14 @@ app.post('/api/microgrids/:id/critical-override', (req, res) => {
+   // Sets internal status but fails to include updated circuit list in grid and returns unwrapped status
+   grid.status = 'OPTIMAL';
+   grid.alertLevel = 'NORMAL';
++  if (!grid.priorityCircuits.includes(circuitName)) {
++    grid.priorityCircuits.unshift(circuitName);
++  }
+ 
+   res.json({
+     success: true,
+     overrideStatus: 'SHIELDED',
++    grid,
+     message: `Circuit ${circuitName} designated as Priority-1 Critical Backup`
+   });
+ });
+@@ -201,10 +205,8 @@ app.post('/api/dispatch/bess', (req, res) => {
+ 
+   // BROKEN LOGIC for D3:
+   // Inverted status: when commanding DISCHARGE, sets OFFLINE_TRIPPED instead of DISCHARGING!
+-  unit.status = isDischarging ? 'OFFLINE_TRIPPED' : 'DISCHARGING';
+-
+-  // Broken rack sort: sorts ascending by temperature (coldest first, hiding critical overheating cells)
+-  const sortedRacks = [...unit.thermalRacks].sort((a, b) => a.tempC - b.tempC);
++  unit.status = isDischarging ? 'DISCHARGING' : 'STANDBY';
++  const sortedRacks = [...unit.thermalRacks].sort((a, b) => b.tempC - a.tempC);
+ 
+   res.json({
+     success: true,
+@@ -234,11 +236,7 @@ app.post('/api/dispatch/engineers', (req, res) => {
+ 
+   // BROKEN LOGIC for D4:
+   // When assigning > 2 engineers, returns array of plain strings instead of engineer objects
+-  if (selected.length > 2) {
+-    assignedEngineers[gridId] = selected.map(e => e.id);
+-  } else {
+-    assignedEngineers[gridId] = selected;
+-  }
++  assignedEngineers[gridId] = selected;
+ 
+   res.json({
+     success: true,
+@@ -267,19 +265,24 @@ app.post('/api/tariffs/calculate', (req, res) => {
+ 
+   // BROKEN LOGIC for D1:
+   // Subtracts feed-in kWh BEFORE evaluating tiered brackets, and applies double discount factor
+-  const netKwh = totalKwh - feedInKwh;
+-  const rawSubtotal = netKwh * baseRate;
+-  const subsidyDiscount = rawSubtotal * subsidyPct; // double counts if e.g. 50 instead of 0.50
+-  const feedInCredit = feedInKwh * feedInRate;
+-  const totalCost = (rawSubtotal - subsidyDiscount) - feedInCredit + accessFee;
++  const lifelineTierKwh = Math.min(totalKwh, 50);
++  const remainingKwh = Math.max(0, totalKwh - 50);
++  const lifelineRate = baseRate * (1 - (subsidyPct / 100));
++  const lifelineCost = lifelineTierKwh * lifelineRate;
++  const regularCost = remainingKwh * baseRate;
++  const grossEnergyCharge = totalKwh * baseRate;
++  const actualEnergyCost = lifelineCost + regularCost;
++  const lifelineSubsidyDiscount = grossEnergyCharge - actualEnergyCost;
++  const solarFeedInCredit = feedInKwh * feedInRate;
++  const totalMonthlyBill = actualEnergyCost - solarFeedInCredit + accessFee;
+ 
+   res.json({
+     totalKwh,
+-    grossEnergyCharge: Number(rawSubtotal.toFixed(2)),
+-    lifelineSubsidyDiscount: Number(subsidyDiscount.toFixed(2)),
+-    solarFeedInCredit: Number(feedInCredit.toFixed(2)),
++    grossEnergyCharge: Number(grossEnergyCharge.toFixed(2)),
++    lifelineSubsidyDiscount: Number(lifelineSubsidyDiscount.toFixed(2)),
++    solarFeedInCredit: Number(solarFeedInCredit.toFixed(2)),
+     gridAccessFee: accessFee,
+-    totalMonthlyBill: Number(totalCost.toFixed(2))
++    totalMonthlyBill: Number(totalMonthlyBill.toFixed(2))
+   });
+ });
+ 
+diff --git a/frontend/public/app.js b/frontend/public/app.js
+index d1df2ef..b831951 100644
+--- a/frontend/public/app.js
++++ b/frontend/public/app.js
+@@ -140,10 +140,11 @@ let state = {
+ function formatCurrency(amountInUSD) {
+   const c = state.currencyRates[state.currency] || state.currencyRates.USD;
+   const converted = amountInUSD * c.rate;
+-  if (converted >= 1000000) {
+-    return `${c.symbol}${converted.toExponential(2)}`;
+-  }
+-  return `${c.symbol}${converted.toFixed(c.decimals)}`;
++  const formatted = new Intl.NumberFormat('en-US', {
++    minimumFractionDigits: c.decimals,
++    maximumFractionDigits: c.decimals
++  }).format(converted);
++  return `${c.symbol}${formatted}`;
+ }
+ 
+ // Initialize Application
+@@ -442,10 +443,21 @@ function setupModalEvents() {
+           body: JSON.stringify({ circuitName, priorityLevel: 'CRITICAL_P1' })
+         }).then(r => r.json());
+ 
+-        if (res.success && res.overrideStatus) {
++        if (res.success) {
+           msg.textContent = '✓ Critical Clinic Backup Circuit Engaged & Shielded!';
+           msg.style.color = '#34d399';
+-          state.selectedGrid.status = 'OPTIMAL';
++          if (res.grid) {
++            state.selectedGrid = res.grid;
++            const idx = state.microgrids.findIndex(g => g.id === res.grid.id);
++            if (idx !== -1) state.microgrids[idx] = res.grid;
++          } else {
++            state.selectedGrid.status = 'OPTIMAL';
++          }
++          const modalBadge = document.getElementById('modal-grid-status');
++          if (modalBadge) {
++            modalBadge.textContent = 'OPTIMAL';
++            modalBadge.className = 'badge badge-optimal';
++          }
+           renderMicrogrids();
+         } else {
+           msg.textContent = `✗ ${res.error || 'Override failed'}`;
+diff --git a/frontend/public/styles.css b/frontend/public/styles.css
+index 39036d9..5fc7ec5 100644
+--- a/frontend/public/styles.css
++++ b/frontend/public/styles.css
+@@ -218,9 +218,8 @@ body {
+ /* D6 Base Bug 1: Filter bar overflow causing horizontal break */
+ .filter-bar {
+   display: flex;
+-  overflow: hidden;
+-  white-space: nowrap;
+-  width: 600px;
++  flex-wrap: wrap;
++  width: auto;
+   gap: 0.5rem;
+ }
+ 
+@@ -250,19 +249,19 @@ body {
+ 
+ /* D6 Base Bug 2: Overlapping Cards layout defect */
+ .microgrid-grid {
+-  display: flex;
+-  flex-wrap: nowrap;
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
++  gap: 1.25rem;
+   width: 100%;
+-  margin-right: -200px;
+-  gap: -40px;
+-  overflow-x: auto;
++  margin-right: 0;
++  overflow-x: visible;
+   padding-bottom: 1rem;
+ }
+ 
+ .microgrid-card {
+-  min-width: 360px;
+-  max-width: 380px;
+-  margin-right: -55px; /* Causes severe visual overlap */
++  min-width: 0;
++  max-width: none;
++  margin-right: 0;
+   background: var(--bg-card);
+   border: 1px solid var(--border-color);
+   border-radius: 10px;
+@@ -276,7 +275,7 @@ body {
+ 
+ .microgrid-card:hover {
+   transform: translateY(-2px);
+-  z-index: 10;
++  z-index: 2;
+ }
+ 
+ .card-top {
+@@ -332,7 +331,7 @@ body {
+ 
+ .badge-warning {
+   background-color: #ffeb3b;
+-  color: #ffffff; /* Extremely low contrast unreadable text */
++  color: #111827;
+ }
+ 
+ .badge-standby {
+@@ -602,13 +601,17 @@ body {
+ 
+ /* D6 Base Bug 4: Drawer covering navigation header */
+ .detail-drawer {
+-  position: absolute;
++  position: fixed;
+   top: 0;
+-  left: 0;
+-  width: 100%;
+-  height: 100%;
++  right: 0;
++  left: auto;
++  width: 520px;
++  max-width: 90vw;
++  height: 100vh;
+   background: #0b0f17;
+-  z-index: 9999;
++  border-left: 1px solid var(--border-color);
++  box-shadow: -8px 0 25px rgba(0, 0, 0, 0.6);
++  z-index: 1000;
+   padding: 2rem;
+   overflow-y: auto;
+ }

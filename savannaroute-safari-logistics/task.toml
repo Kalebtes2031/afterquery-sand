@@ -1,0 +1,41 @@
+schema_version = "1.1"
+
+[task]
+name = "savannaroute/pan-african-safari-logistics"
+description = "SavannaRoute is an operations dashboard for Pan-African safari expeditions and wildlife conservation logistics across Serengeti, Maasai Mara, Bwindi Impenetrable Forest, and Okavango Delta. The platform suffers from seasonal peak pricing calculation discrepancies, unverified gorilla tracking permit quota state desynchronization, inverted 4x4 fleet dispatch status flags and reverse transit waypoint ordering, ranger escort array serialization defects, exponent formatting errors in East African multi-currency conversions (KES/TZS/UGX), and overlapping card grid layout with unreadable badge contrast."
+authors = [{ name = "SavannaRoute Operations", email = "ops@savannaroute.org" }]
+keywords = ["safari", "conservation", "africa", "logistics", "pricing", "express", "playwright", "fleet-dispatch", "permits", "layout"]
+
+[metadata]
+category = "Full Stack Web Application"
+task_family = "Wildlife Reservation & Logistics Systems"
+source_repo = "app"
+base_commit = "99953520c0b2fae362868dba92d7540fdac45056"
+fail_to_pass_count = 6
+pass_to_pass_count = 2
+skipped_meta_files = []
+
+[verifier]
+timeout_sec = 600.0
+user = "root"
+
+[verifier.env]
+
+[agent]
+timeout_sec = 1800.0
+user = "root"
+
+[solution]
+
+[solution.env]
+
+[environment]
+build_timeout_sec = 1200.0
+cpus = 2
+memory_mb = 4096
+storage_mb = 10240
+gpus = 0
+gpu_types = []
+allow_internet = true
+
+[environment.env]
