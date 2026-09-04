@@ -1,16 +1,16 @@
-I opened Horn Trade Review to tackle the corridor queue. Unfortunately, the technology is so faulty that I cannot rely on the screen at all.
+I opened Horn Trade Review to tackle the corridor queue. Right now the desk is so broken I cannot trust the screen at all.
 
-All chips listed show 'pending.' HT-107 is approved and HT-118 is rejected, yet both bear a visible yellow 'pending' tag. Clicking HT-118, it becomes apparent that the chip on the review panel is also pending even if in Current state it says 'rejected.' The record retains the option 'Approve/Reject.' Trying to approve an active load, HT-121, did not change the chip record, thus requiring a page reload to see the approved tag. As a matter of fact, the buttons should stop responding once the load is decided.
+All chips in the list show pending. HT-107 is already approved and HT-118 was rejected, but both still show a yellow pending tag. Click HT-118 and the chip on the review header is pending too, even when Current state inside the panel says rejected. Approve and Reject stay enabled on that record. When I approve a pending load like HT-121, the list chip never updates — I have to reload the page to see approved. Those buttons should lock once a load is decided.
 
-The Pending filter does not narrow down the results. Approved and rejected rows still show. Pending may only display HT-104, HT-112, and HT-121. The location filter works the opposite way. Kenya appears to be limited only to the base loads, excluding HT-104 from Ethiopia and HT-125 from Tanzania, even though shipments starting from or going towards Kenya should be present here. Instead, Kenya should still show HT-104, HT-107, and HT-125 too. The search function is also not functional. If I type sesame and press Enter, HT-118 does not came back.
+The Pending filter does not cut the queue down. Approved and rejected rows still show. Pending should leave only HT-104, HT-112 and HT-121. The country filter is messed up. Kenya only keeps loads that start there, so HT-104 (Ethiopia → Kenya) and HT-125 (Tanzania → Kenya) drop out. Stuff that starts in Kenya or ends there has to stay — Kenya should be HT-104, HT-107 and HT-125. Search is broken too. If I type sesame and press Enter, HT-118 does not come back.
 
-The weight of the corridor up top in the statistics shows 4680 kg, which is low. If you put six records together, you will see 5590 kg. The rejected load of sesame is 910 kg and still went through the corridor, so it is counted.
+Corridor weight up top shows 4,680 kg, which is too low. Add the six records and you get 5,590 kg. The rejected sesame load is 910 kg and it still ran the corridor, so it counts.
 
-Rejecting is done in the opposite manner. An empty note is issued and the shipment remains in a pending state. If a proper note giving the reasons, like missing state phytosanitary documents, comes in, the request is rejected, and the row turns pending. Empty reasons should be rejected. Written reasons should always work.
+Reject is backwards. An empty reason goes through and the shipment leaves pending. Type a real note — missing phytosanitary papers, whatever — and the request fails, so the row stays pending. Empty reasons need to get blocked. A written reason needs to stick on the record.
 
-I therefore cannot view the reviewer's note either before signing it. The approve and reject buttons are over the text preventing seeing the last lines. The note should be fully visible first, two buttons below it separated from the note and not overlapping it.
+I also cannot read the reviewer note before I sign off. Approve and Reject sit on top of that text and cover the last lines. The note should be fully visible first, then the two buttons under it with space between — no overlap and don't cut anything off.
 
-This is how the desk looks now. All chips pending, buttons covering the note, weight not sufficient.
+This is how the desk looks now. Every chip pending, buttons over the note, weight too low:
 
 <img src="/app/problem_assets/broken.png" alt="Horn Trade Review with every row marked pending and the approve reject buttons covering the reviewer note" width="900" />
 
