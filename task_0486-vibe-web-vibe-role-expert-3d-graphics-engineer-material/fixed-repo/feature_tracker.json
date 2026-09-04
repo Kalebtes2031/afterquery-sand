@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Design Direction & Tokens",
+    "status": "done",
+    "notes": "Atelier Lumi\u00e8re: warm parchment bg (#f5f1ec), terracotta accent (#b85c38), slate teal (#5c7a8a), DM Sans + Libre Baskerville typography"
+  },
+  {
+    "name": "Scatter Plot with 10 Materials",
+    "status": "done",
+    "notes": "10 procedural material nodes on 2D scatter plot with grid lines, axis labels, tick marks, smooth CSS transitions on axis change"
+  },
+  {
+    "name": "Three.js 3D Viewport with Raking Light",
+    "status": "done",
+    "notes": "WebGL viewport with PlaneGeometry, MeshStandardMaterial, procedural canvas textures (color, roughness, normal), PointLight following mouse for raking effect, auto-orbit when idle"
+  },
+  {
+    "name": "Procedural PBR Textures (10 materials)",
+    "status": "done",
+    "notes": "Brushed Oak, Slate Tile, Polished Marble, Woven Carpet, Brushed Concrete, Strand Bamboo, Natural Cork, Ceramic Tile, Herringbone Walnut, Terrazzo - each with color, roughness, normal maps from noise functions"
+  },
+  {
+    "name": "Keyboard Navigation & Persistence",
+    "status": "done",
+    "notes": "Tab/Arrow key navigation on scatter plot, Enter/Space to select, localStorage persistence for axes and selected material"
+  },
+  {
+    "name": "UI Polish & Loading State",
+    "status": "done",
+    "notes": "Loading spinner during texture generation, tooltips on hover, animated property bars, responsive resize handler, premium Atelier Lumi\u00e8re design language"
+  },
+  {
+    "name": "Mobile Responsive Layout",
+    "status": "done",
+    "notes": "Stack panels vertically on narrow viewports, resize scatter plot and viewport"
+  },
+  {
+    "name": "Material Search/Filter",
+    "status": "done",
+    "notes": "Search box to filter and highlight materials in the scatter plot"
+  },
+  {
+    "name": "Material Comparison Mode",
+    "status": "done",
+    "notes": "Allow comparing two materials side by side with property bar overlays"
+  },
+  {
+    "name": "Undo/Redo Selection History",
+    "status": "done",
+    "notes": "Track selection history with undo/redo buttons and Ctrl+Z/Ctrl+Y shortcuts"
+  },
+  {
+    "name": "Export Material Data",
+    "status": "done",
+    "notes": "Export button downloads JSON with all material properties"
+  },
+  {
+    "name": "Staggered Node Entrance Animation",
+    "status": "done",
+    "notes": "Nodes appear one by one with a staggered fade-in on first load"
+  },
+  {
+    "name": "Number Key Shortcuts & Clear Selection",
+    "status": "done",
+    "notes": "Number keys 1-0 to select materials, clear button in details panel"
+  },
+  {
+    "name": "Fix text overlapping in panel header (top right)",
+    "status": "done",
+    "notes": "Reduced search input from 180px to 150px, tightened axis-controls gap from 12px to 8px, reduced inline flex gap from 12px to 8px. First row now uses 769px of 832px available. Zero overlaps confirmed."
+  },
+  {
+    "name": "Fix header-right text overlap",
+    "status": "done",
+    "notes": "Fixed by adding .status-dot class to the green indicator span and updating CSS selector from .header-right span to .header-right .status-dot"
+  },
+  {
+    "name": "Additional visual polish and refinements",
+    "status": "done",
+    "notes": "Added scatter container background gradient, improved node shadows/inner glow, refined grid line opacity, viewport inner shadow, details panel gradient, search input expand-on-focus"
+  }
+]
